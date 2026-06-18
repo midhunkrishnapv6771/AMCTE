@@ -1,0 +1,77 @@
+name: AMTCE Harvester Pipeline
+
+on:
+  schedule:
+    # Run automatically every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      command:
+        description: 'Command to run (e.g. download or scrape)'
+        required: false
+        default: 'python Download_Modules/downloader_main.py --help'
+      extra_args:
+        description: 'Extra arguments to pass to the command'
+        required: false
+        default: ''
+
+jobs:
+  harvest-and-process:
+    runs-on: ubuntu-latest
+
+    permissions:
+      actions: write
+      contents: write
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+        cache: 'pip'
+
+    - name: Install System Dependencies (FFmpeg)
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ffmpeg
+
+    - name: Install Python Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run Processing Pipeline
+      env:
+        # Pass required credentials from repository secrets
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        CREDENTIALS_ENCRYPTION_KEY: ${{ secrets.CREDENTIALS_ENCRYPTION_KEY }}
+        APIFY_API_TOKEN: ${{ secrets.APIFY_API_TOKEN }}
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        GITHUB_ACTIONS: "true"
+      run: |
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          echo "🚀 Running manual command: ${{ github.event.inputs.command }} ${{ github.event.inputs.extra_args }}"
+          ${{ github.event.inputs.command }} ${{ github.event.inputs.extra_args }}
+        else
+          echo "⏰ Running scheduled harvest cycle..."
+          # If there is a default account list, you can replace this or let it run CLI help
+          python Download_Modules/downloader_main.py --help
+        fi
+
+    - name: Auto-Restart Workflow
+      if: always()
+      env:
+        GH_TOKEN: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+      run: |
+        echo "🔄 Triggering next workflow run to enable continuous loops..."
+        curl -L \
+          -X POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer $GH_TOKEN" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          https://api.github.com/repos/${{ github.repository }}/actions/workflows/harvester.yml/dispatches \
+          -d '{"ref":"${{ github.ref_name }}"}'
