@@ -533,7 +533,11 @@ def get_video(filename):
 
 if __name__ == "__main__":
     flask_host = os.environ.get("FLASK_HOST", "127.0.0.1")
-    flask_port = int(os.environ.get("FLASK_PORT", 5000))
+    # Auto-bind to all interfaces in cloud environments (detecting PORT env var)
+    if "PORT" in os.environ and "FLASK_HOST" not in os.environ:
+        flask_host = "0.0.0.0"
+    flask_port = int(os.environ.get("FLASK_PORT", os.environ.get("PORT", 5000)))
     flask_debug = os.environ.get("FLASK_DEBUG", "False").strip().lower() in ("true", "1", "yes")
     logger.info(f"🚀 Starting Web Harvester on http://{flask_host}:{flask_port} (debug={flask_debug})")
     app.run(host=flask_host, port=flask_port, debug=flask_debug, use_reloader=False)
+
