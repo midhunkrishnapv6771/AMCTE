@@ -63,8 +63,9 @@ jobs:
         fi
 
     - name: Auto-Restart Workflow
-      if: always()
+      if: failure()
       env:
+
         GH_TOKEN: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
       run: |
         echo "🔄 Triggering next workflow run to enable continuous loops..."
