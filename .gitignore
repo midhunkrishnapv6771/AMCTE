@@ -1,0 +1,68 @@
+# ============================================================
+# OS
+# ============================================================
+.DS_Store
+Thumbs.db
+bot.log
+bit.log
+
+# ============================================================
+# VS CODE / IDE
+# ============================================================
+.vscode/
+.idea/
+*.swp
+
+# ============================================================
+# AI MODELS (large binaries)
+# ============================================================
+models/
+*.pt
+*.pth
+*.onnx
+*.bin
+*.safetensors
+
+# ============================================================
+# CACHES
+# ============================================================
+Processed_Cache/
+.gradio/
+.pytest_cache/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+temp_venv/
+
+# Secrets and environment configurations
+*.env
+.env
+Credentials/.env
+Credentials/*.env
+Credentials/client_secret.json
+Credentials/*.json
+
+# Credentials Cache (extremely sensitive: contains encryption pools and cookies)
+cache/
+cache/*
+
+# Local Database
+Download_Modules/Downloader_db/index.db
+
+# Logs and runtime data
+logs/
+*.log
+logs_and_tracker/__pycache__/
+
+# Downloaded assets
+downloads/
+
+# Dynamic audio pool files
+Original_audio/
+
+# Local Graphify Output
+graphify-out/
+

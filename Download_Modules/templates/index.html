@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AMTCE Harvester Pro</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Local CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="background-effects">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+    </div>
+
+    <div class="container">
+        <header class="amtce-header">
+            <h1 class="amtce-title">AMTCE HARVESTER <span class="neon-accent">PRO</span></h1>
+            <p class="subtitle">High-Performance Media Extraction Engine</p>
+        </header>
+
+        <main class="grid-layout">
+            <div class="left-panel">
+                <section class="glass-card config-panel">
+                    <h2><span class="icon">🛠️</span> Configuration</h2>
+                    <form id="harvest-form">
+                        <div class="form-group">
+                            <label for="urlInput">Source Intelligence (URL) <span class="required">*</span></label>
+                            <input type="url" id="urlInput" placeholder="Instagram, TikTok, YouTube..." required autocomplete="off">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="titleInput">Custom File Name (Optional)</label>
+                            <input type="text" id="titleInput" placeholder="Save file with custom name" autocomplete="off">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="harvestUserIdInput">Profile Username (Optional)</label>
+                            <input type="text" id="harvestUserIdInput" placeholder="e.g., john_dev" autocomplete="off">
+                        </div>
+
+                        <div class="accordion">
+                            <button type="button" class="accordion-toggle" id="trimToggleBtn">
+                                <span class="icon">✂️</span> Optional Trimming <span class="chevron">▼</span>
+                            </button>
+                            <div class="accordion-content" id="trimContent">
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="doTrim">
+                                    <label for="doTrim">Enable Trimming</label>
+                                </div>
+                                <div class="time-inputs" id="timeInputsGroup">
+                                    <div class="form-group half">
+                                        <label for="startTime">Start (s)</label>
+                                        <input type="number" id="startTime" value="0" min="0" step="0.1">
+                                    </div>
+                                    <div class="form-group half">
+                                        <label for="endTime">End (s)</label>
+                                        <input type="number" id="endTime" value="10" min="0" step="0.1">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="primary-btn" id="submitBtn">
+                            <span class="btn-text">🚀 EXECUTE HARVEST</span>
+                            <div class="loader" id="btnLoader"></div>
+                        </button>
+                    </form>
+                </section>
+
+                <section class="glass-card credentials-panel" style="margin-top: 2rem;">
+                    <h2><span class="icon">🔑</span> Profile Settings</h2>
+                    
+                    <div class="form-group">
+                        <label for="userIdInput">Create Profile Username <span class="required">*</span></label>
+                        <input type="text" id="userIdInput" placeholder="e.g., john_dev" required autocomplete="off">
+                        <p class="field-desc" style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">
+                            Saves and connects your custom configurations to this profile.
+                        </p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="profilePassphraseInput">Profile Passphrase <span class="required">*</span></label>
+                        <input type="password" id="profilePassphraseInput" placeholder="Set a strong passphrase to lock this profile..." autocomplete="new-password">
+                        <p class="field-desc" style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">
+                            🔒 Locks this profile to you. Required for all credential & connection operations.
+                        </p>
+                    </div>
+
+                    <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 1.5rem 0;">
+
+                    <!-- Custom Telegram Group Lock -->
+                    <form id="telegram-form">
+                        <div class="form-group">
+                            <label for="telegramChatIdInput">Telegram Chat ID (Secure Vault Group)</label>
+                            <input type="text" id="telegramChatIdInput" placeholder="e.g., -1001234567890" autocomplete="off">
+                            <p class="field-desc" style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">
+                                Add the @AMTCE_bot as Admin to your private group, then enter the Chat ID.
+                            </p>
+                        </div>
+                        <button type="submit" class="secondary-btn" id="telegramSubmitBtn" style="width: 100%; border: 1px solid rgba(255,255,255,0.15);">
+                            <span class="btn-text">📡 CONNECT SECURE TELEGRAM VAULT</span>
+                            <div class="loader" id="telegramBtnLoader"></div>
+                        </button>
+                    </form>
+
+                    <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 1.5rem 0;">
+
+                    <!-- Apify Setup -->
+                    <form id="credentials-form">
+                        <div class="form-group">
+                            <label for="apifyTokenInput">Apify Scraper Token (Optional)</label>
+                            <input type="password" id="apifyTokenInput" placeholder="apify_api_..." autocomplete="off">
+                        </div>
+                        <button type="submit" class="secondary-btn" id="credSubmitBtn" style="width: 100%; border: 1px solid rgba(255,255,255,0.15);">
+                            <span class="btn-text">🔒 SAVE APIFY TOKEN</span>
+                            <div class="loader" id="credBtnLoader"></div>
+                        </button>
+                    </form>
+
+                    <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 1.5rem 0;">
+
+                    <!-- User Friendly OAuth Way -->
+                    <div class="socials-auth-group">
+                        <label style="font-size: 0.9rem; font-weight: 600; color: #fff; display: block; margin-bottom: 0.5rem;">Social Connections (One-Click Link)</label>
+                        <div class="social-buttons-container" style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem;">
+                            <button type="button" class="social-btn youtube-btn" id="connectYoutubeBtn" disabled>
+                                <span style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span class="social-icon">🔴</span> Connect YouTube
+                                </span>
+                                <span class="connection-status badge-disconnected" id="youtubeStatus">Disconnected</span>
+                            </button>
+                            <button type="button" class="social-btn instagram-btn" id="connectInstagramBtn" disabled>
+                                <span style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span class="social-icon">🟣</span> Connect Instagram
+                                </span>
+                                <span class="connection-status badge-disconnected" id="instagramStatus">Disconnected</span>
+                            </button>
+                            <button type="button" class="social-btn github-btn" id="connectGithubBtn" disabled>
+                                <span style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span class="social-icon">⚫</span> Connect GitHub
+                                </span>
+                                <span class="connection-status badge-disconnected" id="githubStatus">Disconnected</span>
+                            </button>
+                        </div>
+                        <p class="field-desc" id="oauthUnlockHint" style="font-size: 0.8rem; color: #ff9900; margin-top: 0.5rem; text-align: center;">
+                            ⚠️ Enter a User Identifier above to enable connection buttons.
+                        </p>
+                    </div>
+                </section>
+            </div>
+
+            <section class="telemetry-panel">
+                <div class="glass-card status-card">
+                    <h2><span class="icon">🛰️</span> Telemetry & Output</h2>
+                    <div class="console-box">
+                        <div class="console-header">
+                            <span class="dot red"></span>
+                            <span class="dot yellow"></span>
+                            <span class="dot green"></span>
+                            <span class="console-title">SYSTEM_LOG</span>
+                        </div>
+                        <div class="console-body" id="statusOutput">
+                            <p class="log-line">System ready. Waiting for input...</p>
+                        </div>
+                    </div>
+                </div>
+
+                 <div class="glass-card video-card" id="videoContainer" style="display: none;">
+                     <h2><span class="icon">🎬</span> Captured Asset</h2>
+                     <!-- HTML5 Video Player to play the streamed video -->
+                     <div class="video-preview-wrapper" style="margin-bottom: 1.25rem; border-radius: 12px; overflow: hidden; background: #000; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);">
+                         <video id="videoPlayer" controls style="width: 100%; display: block; max-height: 420px; object-fit: contain;"></video>
+                     </div>
+                     <div class="path-display" style="display: none;">
+                         <p id="videoPathLabel" style="font-family: monospace; font-size: 0.85rem; color: #aaa; word-break: break-all; margin: 0;"></p>
+                     </div>
+                 </div>
+            </section>
+        </main>
+        
+        <footer>
+            <div class="footer-info">
+                <span class="tag">🌐 Supported Nodes: IG, FB, TikTok, YT, X, & 1K+ others.</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Local JS -->
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
